@@ -1,7 +1,7 @@
 ;********************************************************************************
-;* File Name          : startup_stm32u355xx.s
+;* File Name          : startup_stm32u345xx.s
 ;* Author             : MCD Application Team
-;* Description        : STM32U355xx Ultra Low Power Devices vector
+;* Description        : STM32U345xx Ultra Low Power Devices vector
 ;*                      This module performs:
 ;*                      - Set the initial SP
 ;*                      - Set the initial PC == _iar_program_start,
@@ -14,7 +14,7 @@
 ;*******************************************************************************
 ;* @attention
 ;*
-;* Copyright (c) 2023 STMicroelectronics.
+;* Copyright (c) 2025 STMicroelectronics.
 ;* All rights reserved.
 ;*
 ;* This software is licensed under terms that can be found in the LICENSE file
@@ -113,8 +113,8 @@ __vector_table
         DCD     GPDMA1_Channel7_IRQHandler       ; GPDMA1 Channel 7 global interrupt
         DCD     ADC1_IRQHandler                  ; ADC1 global interrupt
         DCD     DAC1_IRQHandler                  ; DAC1 global interrupt
-        DCD     0                                ; Reserved
-        DCD     0                                ; Reserved
+        DCD     FDCAN1_IT0_IRQHandler            ; FDCAN1 interrupt 0
+        DCD     FDCAN1_IT1_IRQHandler            ; FDCAN1 interrupt 1
         DCD     TIM1_BRK_TERR_IERR_IRQHandler    ; TIM1 Break, Transition error and Index error interrupt
         DCD     TIM1_UP_IRQHandler               ; TIM1 Update interrupt
         DCD     TIM1_TRG_COM_DIR_IDX_IRQHandler  ; TIM1 Trigger, Commutation, Direction change and Index interrupt
@@ -139,7 +139,7 @@ __vector_table
         DCD     0                                ; Reserved
         DCD     USART3_IRQHandler                ; USART3 global interrupt
         DCD     UART4_IRQHandler                 ; UART4 global interrupt
-        DCD     UART5_IRQHandler                 ; UART5 global interrupt
+        DCD     0                                ; Reserved
         DCD     LPUART1_IRQHandler               ; LPUART1 global interrupt
         DCD     LPTIM1_IRQHandler                ; LPTIM1 global interrupt
         DCD     LPTIM2_IRQHandler                ; LPTIM2 global interrupt
@@ -150,7 +150,7 @@ __vector_table
         DCD     USB_FS_IRQHandler                ; USB FS global interrupt
         DCD     CRS_IRQHandler                   ; CRS global interrupt
         DCD     0                                ; Reserved
-        DCD     OCTOSPI1_IRQHandler              ; OctoSPI1 global interrupt
+        DCD     QUADSPI1_IRQHandler              ; QUADSPI1 global interrupt
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
@@ -167,13 +167,13 @@ __vector_table
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
         DCD     TSC_IRQHandler                   ; Touch Sense Controller global interrupt
-        DCD     0                                ; Reserved
+        DCD     AES_IRQHandler                   ; AES global interrupt
         DCD     RNG_IRQHandler                   ; RNG global interrupt
         DCD     FPU_IRQHandler                   ; FPU global interrupt
         DCD     HASH_IRQHandler                  ; HASH global interrupt
         DCD     0                                ; Reserved
         DCD     LPTIM3_IRQHandler                ; LPTIM3 global interrupt
-        DCD     SPI3_IRQHandler                  ; SPI3 global interrupt
+        DCD     0                                ; Reserved
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
@@ -183,10 +183,11 @@ __vector_table
         DCD     0                                ; Reserved
         DCD     ICACHE_IRQHandler                ; Instruction cache global interrupt
         DCD     0                                ; Reserved
+        DCD     0                                ; Reserved
         DCD     LPTIM4_IRQHandler                ; LPTIM4 global interrupt
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
-        DCD     ADC2_IRQHandler                  ; ADC2 global interrupt
+        DCD     0                                ; Reserved
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
         DCD     0                                ; Reserved
@@ -455,6 +456,16 @@ ADC1_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 DAC1_IRQHandler
         B DAC1_IRQHandler
+        
+        PUBWEAK FDCAN1_IT0_IRQHandler
+        SECTION .text:CODE:NOROOT:REORDER(1)
+FDCAN1_IT0_IRQHandler
+        B FDCAN1_IT0_IRQHandler
+
+        PUBWEAK FDCAN1_IT1_IRQHandler
+        SECTION .text:CODE:NOROOT:REORDER(1)
+FDCAN1_IT1_IRQHandler
+        B FDCAN1_IT1_IRQHandler
 
         PUBWEAK TIM1_BRK_TERR_IERR_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
@@ -546,11 +557,6 @@ USART3_IRQHandler
 UART4_IRQHandler
         B UART4_IRQHandler
 
-        PUBWEAK UART5_IRQHandler
-        SECTION .text:CODE:NOROOT:REORDER(1)
-UART5_IRQHandler
-        B UART5_IRQHandler
-
         PUBWEAK LPUART1_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 LPUART1_IRQHandler
@@ -596,10 +602,10 @@ USB_FS_IRQHandler
 CRS_IRQHandler
         B CRS_IRQHandler
 
-        PUBWEAK OCTOSPI1_IRQHandler
+        PUBWEAK QUADSPI1_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
-OCTOSPI1_IRQHandler
-        B OCTOSPI1_IRQHandler
+QUADSPI1_IRQHandler
+        B QUADSPI1_IRQHandler
 
         PUBWEAK GPDMA1_Channel8_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
@@ -636,6 +642,11 @@ I2C3_ER_IRQHandler
 TSC_IRQHandler
         B TSC_IRQHandler
 
+        PUBWEAK AES_IRQHandler
+        SECTION .text:CODE:NOROOT:REORDER(1)
+AES_IRQHandler
+        B AES_IRQHandler
+
         PUBWEAK RNG_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 RNG_IRQHandler
@@ -656,11 +667,6 @@ HASH_IRQHandler
 LPTIM3_IRQHandler
         B LPTIM3_IRQHandler
 
-        PUBWEAK SPI3_IRQHandler
-        SECTION .text:CODE:NOROOT:REORDER(1)
-SPI3_IRQHandler
-        B SPI3_IRQHandler
-
         PUBWEAK ICACHE_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 ICACHE_IRQHandler
@@ -670,11 +676,6 @@ ICACHE_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 LPTIM4_IRQHandler
         B LPTIM4_IRQHandler
-
-        PUBWEAK ADC2_IRQHandler
-        SECTION .text:CODE:NOROOT:REORDER(1)
-ADC2_IRQHandler
-        B ADC2_IRQHandler
 
         PUBWEAK PWR_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
